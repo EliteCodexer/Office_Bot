@@ -1,31 +1,42 @@
+//Load necessary files and apps
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
-require('events').EventEmitter.defaultMaxListeners = 0
 var fs = require('fs'),
     request = require('request');
+require('events').EventEmitter.defaultMaxListeners = 15;
 
-var version = "v6";
+//Turn on bot and let you know
+client.on("ready", () => {
+    console.log(' ');
+    console.log('Bot is up');
+    console.log(' ');
+});
 
-//===SETUP PATHS AND INFO===
-var adminfile = 'F:\servers\\public\\SquadGame\\ServerConfig\\Admins.cfg'; //Path to the admin file you want to add the whitelisted people too. 
+//Variable Declaration
+var welcomechannel = 'the-lobby';
+var statusbannerlink = 'https://cdn.battlemetrics.com/b/standardVertical/3379634.png?foreground=%23EEEEEE&linkColor=%231185ec&lines=%23333333&background=%23222222&chart=players%3A24H&chartColor=%23FF0700&maxPlayersHeight=300'; //Link to Battlemetrics banner
+var adminfile = 'F:\\servers\\public\\SquadGame\\ServerConfig\\Admins.cfg'; //Path to the admin.cfg file for whitelisting.
 var wlchannel = 'queue_skip_request'; //Name of channel you want the automatic whitelist to work in.
-//var adminroleID = '189922351163375618'; //Obtainable by \@role on discord.
-//var p_serverstart = 'C:\\servers\\squad\\1_pubserver\\start_pubserver.bat'; //Path to batch file that starts your server.
-//var p_serverstop = 'C:\\servers\\squad\\1_pubserver\\stop_server.bat'; //Path to batch file that stops your server.
-var statusbannerlink = 'https://cdn.battlemetrics.com/b/standardVertical/3379634.png?foreground=%23EEEEEE&linkColor=%231185ec&lines=%23333333&background=%23222222&chart=players%3A24H&chartColor=%23FF0700&maxPlayersHeight=300';
 
+//Constant declaration
+const prefix = config.prefix;  //Pull prefix from config,json file
+
+//Set bot presence message
 client.on("ready", () => {
     client.user.setPresence({
         game: {
-            name: '!status for map/slots',
+            name: 'Command Prefix \"!\"',//'!status for map/slots',
             type: 0
         }
     });
-    console.log(`Bot version ${version}`);
-	console.log(`Bot made by Fender0246`);
+	  console.log(`App created by Fender0246 with contribution from Github users`);
     console.log(`Logged in as ${client.user.username}!`);
+    console.log('Please remember to spay and neuter your pets.  THANKS!');
+    console.log(' ');
 });
+
+//Get file info for status download
 var download = function(uri, filename, callback) {
     request.head(uri, function(err, res, body) {
         console.log('content-type:', res.headers['content-type']);
@@ -35,148 +46,118 @@ var download = function(uri, filename, callback) {
     });
 };
 
-client.login(config.token);
-
-//SERVER STATUS PULL BANNER (MUMBLERINES CREDS)
-
-const prefix = config.prefix;
-client.on('message', message => {
-    if (message.author.bot) return;
-    if (message.channel.type !== 'text') return;
-    if (!message.content.startsWith(prefix)) return;
-
-    if (message.content.startsWith(prefix + 'status')) {
-        download(statusbannerlink, 'status.png', function() {
-            console.log('done');
-            message.channel.send({
-                files: [{
-                    attachment: './status.png',
-                    name: 'status.png'
-                }]
-            });
-        });
-    }
-});
-
-function startPServer() {
-    const exec = require('child_process').execFile;
-    exec(p_serverstart, function(err, data) {
-        console.log(err);
-        console.log(data);
-    });
-}
-
-
-//START PUB SERVER
-//client.on('message', message => {
-//    if (message.author.bot) return;
-//    if (message.channel.type !== 'text') return;
-//    if (!message.content.startsWith(prefix)) return;
-
-//    if (message.member.roles.has(adminroleID)) {
-//        if (message.content.startsWith(prefix + 'start')) {
-//            const exec = require('child_process').execFile;
-//            exec(p_serverstart, function(err, data) {
-//                console.log(err);
-//                console.log(data);
-//            });
-//            message.channel.send('Server has been **started**.');
-//        }
-//    }
-//});
-
-//STOP PUB SERVER
-//client.on('message', message => {
-//    if (message.author.bot) return;
-//    if (message.channel.type !== 'text') return;
-//    if (!message.content.startsWith(prefix)) return;
-
-//    if (message.member.roles.has(adminroleID)) {
-//        if (message.content.startsWith(prefix + 'stop')) {
-//            const exec = require('child_process').execFile;
-//            exec(p_serverstop, function(err, data) {
-//                console.log(err);
-//                console.log(data);
-//            });
-//            message.channel.send('Server has been **stopped**.');
-//        }
-//    }
-//});
-
-//RESTART PUB SERVER
-//client.on('message', message => {
-//    if (message.author.bot) return;
-//    if (message.channel.type !== 'text') return;
-//    if (!message.content.startsWith(prefix)) return;
-
-//    if (message.member.roles.has(adminroleID)) {
-//        if (message.content.startsWith(prefix + 'restart')) {
-//            const exec = require('child_process').execFile;
-//            exec(p_serverstop, function(err, data) {
-//                console.log(err);
-//                console.log(data);
-//            });
-//            setTimeout(startPServer, 3000);
-//            message.channel.send('Server has been **restarted**.');
-//        }
-//    }
-//});
-
-//MANUALLY ADD STUFF TO ADMIN FILE WHITELIST
-//client.on('message', message => {
-//    if (message.author.bot) return;
-//    if (message.channel.type !== 'text') return;
- //   if (!message.content.startsWith(prefix)) return;
-
-//    if (message.member.roles.has(adminroleID)) {
-//        if (message.content.startsWith(prefix + 'add')) {
-
-//            var input = message.content;
-//            var userInput = input.substr('5') + '\r\n';
-//            var name = input.substr('42');
-//            var fs = require('fs');
- //           fs.appendFile(adminfile, userInput, function(err) {
-//                if (err) throw err;
-//                console.log('Added ' + name + ' to whitelist!');
-//                message.channel.send('User has been added to the whitelist.');
+//Auto Whitelist in Whitelist channel
+// client.on('message', message => {
+//     if (message.channel.name == wlchannel) {
 //
-//            });
-//        }
-//    }
-//});
+//         var input = message.content;
+//         var userInput = input + '\r\n';
+//
+//         var admin = input.substr(0, 6);
+//         var number = input.substr(6, 17);
+//         var whitelist = input.substr(23, 10);
+//
+//         if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
+//
+//             var fs = require('fs');
+//             fs.readFile(adminfile, function(err, data) {
+//                 if (err) throw err;
+//                 if (data.indexOf(number) < 0) {
+//                     var fs = require('fs');
+//                     fs.appendFile(adminfile, userInput, function(err) {
+//                         if (err) throw err;
+//                         console.log("Added " + number + " to the whitelist");
+//                         message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
+//                     });
+//                 } else {
+//                     console.log(number + " is already in the whitelist.");
+//                     message.channel.send("This 64ID is already in the whitelist.");
+//                 }
+//             })
+//
+//         }
+//
+//     }
+// });
 
-//AUTO WHITELIST IN SPECIFIC CHANNEL
+//Bot respond to message with prefix "!".
 client.on('message', message => {
-    if (message.channel.name == wlchannel) {
+    if (message.author.bot && message.channel.type !== 'text' && !message.content.startsWith(prefix)) return;  //Ignore messages by bots, messages not in text channels, and messages that do not begin ! prefix
 
+    // Battlemetrics server status banner post
+    if (message.content.startsWith(prefix + 'status')) {
+         download(statusbannerlink, 'status.png', function() {  //Download banner from link variable and save as status.png
+               console.log('Status banner posted');  //Echo in log
+               console.log(' ');
+               message.channel.send({  //Send status banner image
+                   files: [{
+                       attachment: './status.png',
+                       name: 'status.png'
+                   }]
+               });
+           });
+       }
 
-
-        var input = message.content;
-        var userInput = input + '\r\n';
-
-        var admin = input.substr(0, 6);
-        var number = input.substr(6, 17);
-        var whitelist = input.substr(23, 10);
-
-        if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
-
-            var fs = require('fs');
-            fs.readFile(adminfile, function(err, data) {
-                if (err) throw err;
-                if (data.indexOf(number) < 0) {
-                    var fs = require('fs');
-                    fs.appendFile(adminfile, userInput, function(err) {
-                        if (err) throw err;
-                        console.log("Added " + number + " to the whitelist");
-                        message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
-                    });
-                } else {
-                    console.log(number + " is already in the whitelist.");
-                    message.channel.send("This 64ID is already in the whitelist.");
-                }
-            })
-
-        }
+    //TeamSpeak Info RichEmbed
+    if (message.content.startsWith(prefix + 'TS')) {
+      const Embed = new Discord.RichEmbed()  //Create TS info embed
+        .setColor('#FF0000')
+        .setTitle('The most TOXIC TeamSpeak in the USA!')
+        .setAuthor('The Doctor\'s Office')
+        .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
+        .addField('```Teamspeak Address:```', '```ts3.docsoffice.net:9160```')
+        .addField("Download TeamSpeak", "[Click here](https://teamspeak.com/en/downloads/)")
+        console.log('TS info sent.');  //Echo in log
+        console.log(' ');
+        message.channel.send(Embed);  //Send TS info embed in channel where command was sent
 
     }
+
+    //Round Info UNFINISHED
+    if (message.content.startsWith(prefix + 'round')) {
+      const Embed = new Discord.RichEmbed()
+      .setColor('#FF0000')
+      .setTitle('The Doctor\'s Office | Cincinnati')
+      .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
+      .addField('Current Map:', '```OP First Light```')
+      .addField('Player Count:', '```94 / 100```', true)
+      .addField('Time Left:', '```4:20```', true)
+      .setFooter('UNDER CONSTRUCTION STILL YOU MORONS')
+      console.log('Round info posted');  //Echo in log
+      console.log(' ');
+      message.channel.send(Embed);  //Send round info embed in channel where command was sent
+
+    }
+
+    if (message.content.startsWith(prefix + 'traps')) {
+      const Embed = new Discord.RichEmbed()
+      message.channel.send('https://images3.memedroid.com/images/UPLOADED100/5ccc8b2e129b6.jpeg');
+      console.log('TRAP');  //Echo in log
+      console.log(' ');
+
+    }
+
 });
+
+//New Discord User Welcome with Teamspeak Embed
+client.on('guildMemberAdd', member => {
+  const channel = member.guild.channels.find(ch => ch.name === 'the-lobby');  //Send welsome message in channel 'the-lobby'
+  if (!channel) return;  //If Discord join channel is not 'the-lobby', ignore
+    channel.send(`Welcome to The Doctor\'s Office, ${member}.  We use Teamspeak!`);  //Send welcome message to user that joined
+    console.log('User ' + member.user.tag + ' has joined the server.'); //Output to log that a user has join and that user's username.
+    console.log('TS info sent to new user.');  //Echo in log
+    console.log(' ');
+
+    const Embed = new Discord.RichEmbed()  //Create TS info embed
+    .setColor('#FF0000')
+    .setTitle('The most TOXIC TeamSpeak in the USA!')
+    .setAuthor('The Doctor\'s Office')
+    .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
+    .addField('```Teamspeak Address:```', '```ts3.docsoffice.net:9160```')
+    .addField("Download TeamSpeak", "[Click here](https://teamspeak.com/en/downloads/)")
+
+    channel.send(Embed); //Send the embed message in current channel
+
+});
+
+client.login(config.token);  //Bot Login to Discord.  Token is bot unique.  Can be reset.
