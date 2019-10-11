@@ -30,7 +30,7 @@ client.on("ready", () => {
             type: 0
         }
     });
-	  console.log(`App created by Fender0246 with contribution from Github users`);
+    console.log(`App created by Fender0246 with contribution from Github users`);
     console.log(`Logged in as ${client.user.username}!`);
     console.log('Please remember to spay and neuter your pets.  THANKS!');
     console.log(' ');
