@@ -129,14 +129,6 @@ client.on('message', message => {
 
     }
 
-    if (message.content.startsWith(prefix + 'traps')) {
-      const Embed = new Discord.RichEmbed()
-      message.channel.send('https://images3.memedroid.com/images/UPLOADED100/5ccc8b2e129b6.jpeg');
-      console.log('TRAP');  //Echo in log
-      console.log(' ');
-
-    }
-
 });
 
 //New Discord User Welcome with Teamspeak Embed
