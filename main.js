@@ -26,7 +26,7 @@ const prefix = config.prefix;  //Pull prefix from config,json file
 client.on("ready", () => {
     client.user.setPresence({
         game: {
-            name: 'Command Prefix \"!\"',//'!status for map/slots',
+            name: '!help for commands',//'!status for map/slots',
             type: 0
         }
     });
@@ -99,7 +99,7 @@ client.on('message', message => {
        }
 
     //TeamSpeak Info RichEmbed
-    if (message.content.startsWith(prefix + 'TS')) {
+    if (message.content.startsWith(prefix + 'TS') || message.content.startsWith(prefix + 'ts')) {
       const Embed = new Discord.RichEmbed()  //Create TS info embed
         .setColor('#FF0000')
         .setTitle('The most TOXIC TeamSpeak in the USA!')
