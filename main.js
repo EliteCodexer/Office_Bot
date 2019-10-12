@@ -26,7 +26,7 @@ const prefix = config.prefix;  //Pull prefix from config,json file
 client.on("ready", () => {
     client.user.setPresence({
         game: {
-            name: 'Command Prefix \"!\"',//'!status for map/slots',
+            name: '\"!\"help for commands',//'!status for map/slots',
             type: 0
         }
     });
