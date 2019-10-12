@@ -99,7 +99,7 @@ client.on('message', message => {
        }
 
     //TeamSpeak Info RichEmbed
-    if (message.content.startsWith(prefix + 'TS')) {
+    if (message.content.startsWith(prefix + 'TS') || message.content.startsWith(prefix + 'ts')) {
       const Embed = new Discord.RichEmbed()  //Create TS info embed
         .setColor('#FF0000')
         .setTitle('The most TOXIC TeamSpeak in the USA!')
