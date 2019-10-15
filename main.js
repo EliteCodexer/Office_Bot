@@ -47,38 +47,38 @@ var download = function(uri, filename, callback) {
 };
 
 //Auto Whitelist in Whitelist channel
-client.on('message', message => {
-    if (message.channel.name == wlchannel) {
-
-        var input = message.content;
-        var userInput = input + '\r\n';
-
-        var admin = input.substr(0, 6);
-        var number = input.substr(6, 17);
-        var whitelist = input.substr(23, 10);
-
-        if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
-
-            var fs = require('fs');
-            fs.readFile(adminfile, function(err, data) {
-                if (err) throw err;
-                if (data.indexOf(number) < 0) {
-                    var fs = require('fs');
-                    fs.appendFile(adminfile, userInput, function(err) {
-                        if (err) throw err;
-                        console.log("Added " + number + " to the whitelist");
-                        message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
-                    });
-                } else {
-                    console.log(number + " is already in the whitelist.");
-                    message.channel.send("This 64ID is already in the whitelist.");
-                }
-            })
-
-        }
-
-    }
-});
+// client.on('message', message => {
+//     if (message.channel.name == wlchannel) {
+//
+//         var input = message.content;
+//         var userInput = input + '\r\n';
+//
+//         var admin = input.substr(0, 6);
+//         var number = input.substr(6, 17);
+//         var whitelist = input.substr(23, 10);
+//
+//         if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
+//
+//             var fs = require('fs');
+//             fs.readFile(adminfile, function(err, data) {
+//                 if (err) throw err;
+//                 if (data.indexOf(number) < 0) {
+//                     var fs = require('fs');
+//                     fs.appendFile(adminfile, userInput, function(err) {
+//                         if (err) throw err;
+//                         console.log("Added " + number + " to the whitelist");
+//                         message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
+//                     });
+//                 } else {
+//                     console.log(number + " is already in the whitelist.");
+//                     message.channel.send("This 64ID is already in the whitelist.");
+//                 }
+//             })
+//
+//         }
+//
+//     }
+// });
 
 //Bot respond to message with prefix "!".
 client.on('message', message => {
