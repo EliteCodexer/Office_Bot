@@ -47,39 +47,39 @@ var download = function(uri, filename, callback) {
     });
 };
 
-Auto Whitelist in Whitelist channel
-client.on('message', message => {
-    if (message.channel.name == wlchannel) {
-
-        var input = message.content;
-        var userInput = input + '\r\n';
-
-        var admin = input.substr(0, 6);
-        var number = input.substr(6, 17);
-        var whitelist = input.substr(23, 10);
-
-        if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
-
-            var fs = require('fs');
-            fs.readFile(adminfile, function(err, data) {
-                if (err) throw err;
-                if (data.indexOf(number) < 0) {
-                    var fs = require('fs');
-                    fs.appendFile(adminfile, userInput, function(err) {
-                        if (err) throw err;
-                        console.log("Added " + number + " to the whitelist");
-                        message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
-                    });
-                } else {
-                    console.log(number + " is already in the whitelist.");
-                    message.channel.send("This 64ID is already in the whitelist.");
-                }
-            })
-
-        }
-
-    }
-});
+// Auto Whitelist in Whitelist channel
+// client.on('message', message => {
+//     if (message.channel.name == wlchannel) {
+//
+//         var input = message.content;
+//         var userInput = input + '\r\n';
+//
+//         var admin = input.substr(0, 6);
+//         var number = input.substr(6, 17);
+//         var whitelist = input.substr(23, 10);
+//
+//         if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
+//
+//             var fs = require('fs');
+//             fs.readFile(adminfile, function(err, data) {
+//                 if (err) throw err;
+//                 if (data.indexOf(number) < 0) {
+//                     var fs = require('fs');
+//                     fs.appendFile(adminfile, userInput, function(err) {
+//                         if (err) throw err;
+//                         console.log("Added " + number + " to the whitelist");
+//                         message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
+//                     });
+//                 } else {
+//                     console.log(number + " is already in the whitelist.");
+//                     message.channel.send("This 64ID is already in the whitelist.");
+//                 }
+//             })
+//
+//         }
+//
+//     }
+// });
 
 //Bot respond to message with prefix "!".
 client.on('message', message => {
@@ -88,6 +88,8 @@ client.on('message', message => {
     //Help
     if (message.content.startsWith(prefix + 'help')) {
       message.channel.send('Here are the current bot commands: ```!status - Display Squad Server Status``` ```!TS or !ts - Display Teamspeak Connection Information``` ```!online - Display total number of players currently in Teamspeak.``` ')
+      console.log('Help requested.');  //Echo in log
+      console.log(' ');
     }
 
     // Battlemetrics server status banner post
@@ -106,7 +108,7 @@ client.on('message', message => {
 
     //TeamSpeak Info RichEmbed
     if (message.content.startsWith(prefix + 'TS') || message.content.startsWith(prefix + 'ts')) {
-      const Embed = new Discord.RichEmbed()  //Create TS info embed
+      const embed = new Discord.RichEmbed()  //Create TS info embed
         .setColor('#FF0000')
         .setTitle('The most TOXIC TeamSpeak in the USA!')
         .setAuthor('The Doctor\'s Office')
@@ -115,13 +117,13 @@ client.on('message', message => {
         .addField("Download TeamSpeak", "[Click here](https://teamspeak.com/en/downloads/)")
         console.log('TS info sent.');  //Echo in log
         console.log(' ');
-        message.channel.send(Embed);  //Send TS info embed in channel where command was sent
+        message.channel.send({embed});  //Send TS info embed in channel where command was sent
 
     }
 
     //Round Info UNFINISHED
     if (message.content.startsWith(prefix + 'round')) {
-      const Embed = new Discord.RichEmbed()
+      const embed = new Discord.RichEmbed()
       .setColor('#FF0000')
       .setTitle('The Doctor\'s Office | Cincinnati')
       .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
@@ -131,7 +133,7 @@ client.on('message', message => {
       .setFooter('UNDER CONSTRUCTION STILL YOU MORONS')
       console.log('Round info posted');  //Echo in log
       console.log(' ');
-      message.channel.send(Embed);  //Send round info embed in channel where command was sent
+      message.channel.send({embed});  //Send round info embed in channel where command was sent
 
     }
 
