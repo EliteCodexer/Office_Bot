@@ -2,6 +2,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
+const Gamedig = require('gamedig');
 var fs = require('fs'),
     request = require('request');
 require('events').EventEmitter.defaultMaxListeners = 15;
@@ -46,43 +47,48 @@ var download = function(uri, filename, callback) {
     });
 };
 
-//Auto Whitelist in Whitelist channel
-// client.on('message', message => {
-//     if (message.channel.name == wlchannel) {
-//
-//         var input = message.content;
-//         var userInput = input + '\r\n';
-//
-//         var admin = input.substr(0, 6);
-//         var number = input.substr(6, 17);
-//         var whitelist = input.substr(23, 10);
-//
-//         if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
-//
-//             var fs = require('fs');
-//             fs.readFile(adminfile, function(err, data) {
-//                 if (err) throw err;
-//                 if (data.indexOf(number) < 0) {
-//                     var fs = require('fs');
-//                     fs.appendFile(adminfile, userInput, function(err) {
-//                         if (err) throw err;
-//                         console.log("Added " + number + " to the whitelist");
-//                         message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
-//                     });
-//                 } else {
-//                     console.log(number + " is already in the whitelist.");
-//                     message.channel.send("This 64ID is already in the whitelist.");
-//                 }
-//             })
-//
-//         }
-//
-//     }
-// });
+Auto Whitelist in Whitelist channel
+client.on('message', message => {
+    if (message.channel.name == wlchannel) {
+
+        var input = message.content;
+        var userInput = input + '\r\n';
+
+        var admin = input.substr(0, 6);
+        var number = input.substr(6, 17);
+        var whitelist = input.substr(23, 10);
+
+        if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
+
+            var fs = require('fs');
+            fs.readFile(adminfile, function(err, data) {
+                if (err) throw err;
+                if (data.indexOf(number) < 0) {
+                    var fs = require('fs');
+                    fs.appendFile(adminfile, userInput, function(err) {
+                        if (err) throw err;
+                        console.log("Added " + number + " to the whitelist");
+                        message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
+                    });
+                } else {
+                    console.log(number + " is already in the whitelist.");
+                    message.channel.send("This 64ID is already in the whitelist.");
+                }
+            })
+
+        }
+
+    }
+});
 
 //Bot respond to message with prefix "!".
 client.on('message', message => {
     if (message.author.bot && message.channel.type !== 'text' && !message.content.startsWith(prefix)) return;  //Ignore messages by bots, messages not in text channels, and messages that do not begin ! prefix
+
+    //Help
+    if (message.content.startsWith(prefix + 'help')) {
+      message.channel.send('Here are the current bot commands: ```!status - Display Squad Server Status``` ```!TS or !ts - Display Teamspeak Connection Information``` ```!online - Display total number of players currently in Teamspeak.``` ')
+    }
 
     // Battlemetrics server status banner post
     if (message.content.startsWith(prefix + 'status')) {
@@ -126,6 +132,33 @@ client.on('message', message => {
       console.log('Round info posted');  //Echo in log
       console.log(' ');
       message.channel.send(Embed);  //Send round info embed in channel where command was sent
+
+    }
+
+    //TeamSpeak Stats RichEmbed
+    if (message.content.startsWith(prefix + 'online')) {
+
+      Gamedig.query({
+        type: 'teamspeak3',
+        host: '104.238.135.16',
+        port: 9160,
+        teamspeakQueryPort: 9100
+      }).then((state) => {
+        //console.log(state);
+        clientsonline = state.raw.virtualserver_clientsonline;
+        console.log('There are currently ' + clientsonline +' players online');
+        console.log(' ')
+        const embed = new Discord.RichEmbed()  //Create TS info embed
+          .setColor('#FF0000')
+          .setTitle('The Doctor\'s Office Teamspeak Stats')
+          .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
+          //.addField('Teamspeak Address:', '```ts3.docsoffice.net:9160```')
+          .addField('There are currently ' + clientsonline +' players online', 'Poke an Office Lead for help!')
+        message.channel.send({embed});
+
+      }).catch((error) => {
+        console.log(error);
+      });
 
     }
 
