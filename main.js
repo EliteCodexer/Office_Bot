@@ -48,38 +48,38 @@ var download = function(uri, filename, callback) {
 };
 
 //Auto Whitelist in Whitelist channel
-client.on('message', message => {
-    if (message.channel.name == wlchannel) {
-
-        var input = message.content;
-        var userInput = input + '\r\n';
-
-        var admin = input.substr(0, 6);
-        var number = input.substr(6, 17);
-        var whitelist = input.substr(23, 10);
-
-        if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
-
-            var fs = require('fs');
-            fs.readFile(adminfile, function(err, data) {
-                if (err) throw err;
-                if (data.indexOf(number) < 0) {
-                    var fs = require('fs');
-                    fs.appendFile(adminfile, userInput, function(err) {
-                        if (err) throw err;
-                        console.log("Added " + number + " to the whitelist");
-                        message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
-                    });
-                } else {
-                    console.log(number + " is already in the whitelist.");
-                    message.channel.send("This 64ID is already in the whitelist.");
-                }
-            })
-
-        }
-
-    }
-});
+// client.on('message', message => {
+//     if (message.channel.name == wlchannel) {
+//
+//         var input = message.content;
+//         var userInput = input + '\r\n';
+//
+//         var admin = input.substr(0, 6);
+//         var number = input.substr(6, 17);
+//         var whitelist = input.substr(23, 10);
+//
+//         if (admin == "Admin=" && number < 76561200000000000 && number > 76561190000000000 && whitelist == ":Whitelist") {
+//
+//             var fs = require('fs');
+//             fs.readFile(adminfile, function(err, data) {
+//                 if (err) throw err;
+//                 if (data.indexOf(number) < 0) {
+//                     var fs = require('fs');
+//                     fs.appendFile(adminfile, userInput, function(err) {
+//                         if (err) throw err;
+//                         console.log("Added " + number + " to the whitelist");
+//                         message.channel.send('User (' + number + ') has sucessfully been added to the whitelist.');
+//                     });
+//                 } else {
+//                     console.log(number + " is already in the whitelist.");
+//                     message.channel.send("This 64ID is already in the whitelist.");
+//                 }
+//             })
+//
+//         }
+//
+//     }
+// });
 
 //Bot respond to message with prefix "!".
 client.on('message', message => {
@@ -108,16 +108,29 @@ client.on('message', message => {
 
     //TeamSpeak Info RichEmbed
     if (message.content.startsWith(prefix + 'TS') || message.content.startsWith(prefix + 'ts')) {
-      const embed = new Discord.RichEmbed()  //Create TS info embed
-        .setColor('#FF0000')
-        .setTitle('The most TOXIC TeamSpeak in the USA!')
-        .setAuthor('The Doctor\'s Office')
-        .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
-        .addField('```Teamspeak Address:```', '```ts3.docsoffice.net:9160```')
-        .addField("Download TeamSpeak", "[Click here](https://teamspeak.com/en/downloads/)")
-        console.log('TS info sent.');  //Echo in log
-        console.log(' ');
-        message.channel.send({embed});  //Send TS info embed in channel where command was sent
+            Gamedig.query({
+              type: 'teamspeak3',
+              host: '104.238.135.16',
+              port: 9160,
+              teamspeakQueryPort: 9100
+            }).then((state) => {
+              //console.log(state);
+              clientsonline = state.raw.virtualserver_clientsonline;
+              console.log('TS info sent.');  //Echo in log
+              console.log('There are currently ' + clientsonline +' players online');   //Echo in log
+              console.log(' ')
+              const embed = new Discord.RichEmbed()  //Create TS info embed
+                .setColor('#FF0000')
+                .setTitle('The most TOXIC TeamSpeak in the USA!')
+                .setAuthor('The Doctor\'s Office')
+                .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
+                .addField('Teamspeak Address:', 'ts3.docsoffice.net:9160', true)
+                .addField('There are currently **' + clientsonline +'** players online', 'Download TeamSpeak [-->HERE<--](https://teamspeak.com/en/downloads/)', true)
+              message.channel.send({embed});   //Send TS info embed in channel where command was sent
+
+            }).catch((error) => {
+              console.log(error);
+            });
 
     }
 
@@ -134,33 +147,6 @@ client.on('message', message => {
       console.log('Round info posted');  //Echo in log
       console.log(' ');
       message.channel.send({embed});  //Send round info embed in channel where command was sent
-
-    }
-
-    //TeamSpeak Stats RichEmbed
-    if (message.content.startsWith(prefix + 'online')) {
-
-      Gamedig.query({
-        type: 'teamspeak3',
-        host: '104.238.135.16',
-        port: 9160,
-        teamspeakQueryPort: 9100
-      }).then((state) => {
-        //console.log(state);
-        clientsonline = state.raw.virtualserver_clientsonline;
-        console.log('There are currently ' + clientsonline +' players online');
-        console.log(' ')
-        const embed = new Discord.RichEmbed()  //Create TS info embed
-          .setColor('#FF0000')
-          .setTitle('The Doctor\'s Office Teamspeak Stats')
-          .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
-          //.addField('Teamspeak Address:', '```ts3.docsoffice.net:9160```')
-          .addField('There are currently ' + clientsonline +' players online', 'Poke an Office Lead for help!')
-        message.channel.send({embed});
-
-      }).catch((error) => {
-        console.log(error);
-      });
 
     }
 
