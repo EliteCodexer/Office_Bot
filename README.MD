@@ -1,9 +1,9 @@
-# squad_server_bot
-Manage your squad server from the comfort of your discord. **THIS ONLY WORKS FOR WINDOWS!!**
+# Office_Bot
+Discord Bot for Squad Server, Teamspeak, and Discord admininistration for The Doctor's Office. **THIS ONLY WORKS FOR WINDOWS!!**
 
-**HOW TO CREATE A BOT ON DISCORD AND INSTALL RECQUIRED FILES**
+**INSTALLATION OF REQUIRED FILES AND BOT INITIAL SETUP**
 
-1) Download NodeJs on the machine. https://nodejs.org/en/
+1) Install NodeJs on host. https://nodejs.org/en/
 2) Create the discord bot and get the token. (https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
 3) Open the config.json with text editor in the bot's files and change the TOKEN_PLACEHOLDER with the proper token.
 4) Open the console.bat and run this commmand:
@@ -13,15 +13,14 @@ npm install --save --msvs_version=2015 discordv8
 
 **SETTING UP THE BOT**
 
-1) Move the stop_server.bat file to the server you wish to link to the bot. Ensure your start file points to the absolute path of the server (starting with C:\ etc.). Ensure both files are similar to the ones in the squadfiles directory found in this repo.
-2) In the bot's files, open main.js with a text editor and edit the paths, whitelist channel, and admin role id's to the right things. You should only have to edit line 11 - 16.
-3) Execute the start.bat to initialize the bot.
+1) In the bot's files, open main.js with a text editor and update file paths to the proper directories, enter whitelist channel name, and specify the channel you would like the auto-welcome to ping new server joins.
+2) Execute the start.bat to initialize the bot.
 
 **DEFAULT COMMANDS**
 
-- *!status:* Displays server status and banner. Available to the public in any channel.
-- *!start, !restart, !stop:* Allow the admin role specified in the configuration to start, restart, and stop the server. (Currently disabled)
-- *!add xxx:* Allows you to add text directly to the admin file. (Currently disabled)
+- *!help*: Displays current availble commands in Discord.  Available in any channel with bot access.
+- *!status*: Displays server status and banner. Available in any channel with bot access.
+- *!ts*: Displays Teamspeak Server information including server address, current active players, and a link to download Teamspeak 3.
 
 **NOTE**
 
