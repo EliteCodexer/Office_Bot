@@ -2,6 +2,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
+const Gamedig = require('gamedig');
 var fs = require('fs'),
     request = require('request');
 require('events').EventEmitter.defaultMaxListeners = 15;
@@ -84,6 +85,13 @@ client.on('message', message => {
 client.on('message', message => {
     if (message.author.bot && message.channel.type !== 'text' && !message.content.startsWith(prefix)) return;  //Ignore messages by bots, messages not in text channels, and messages that do not begin ! prefix
 
+    //Help
+    if (message.content.startsWith(prefix + 'help')) {
+      message.channel.send('Here are the current bot commands: ```!status - Display Squad Server Status``` ```!TS or !ts - Display Teamspeak Connection Information```')
+      console.log('Help requested.');  //Echo in log
+      console.log(' ');
+    }
+
     // Battlemetrics server status banner post
     if (message.content.startsWith(prefix + 'status')) {
          download(statusbannerlink, 'status.png', function() {  //Download banner from link variable and save as status.png
@@ -99,23 +107,46 @@ client.on('message', message => {
        }
 
     //TeamSpeak Info RichEmbed
-    if (message.content.startsWith(prefix + 'TS') || message.content.startsWith(prefix + 'ts')) {
-      const Embed = new Discord.RichEmbed()  //Create TS info embed
-        .setColor('#FF0000')
-        .setTitle('The most TOXIC TeamSpeak in the USA!')
-        .setAuthor('The Doctor\'s Office')
-        .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
-        .addField('```Teamspeak Address:```', '```ts3.docsoffice.net:9160```')
-        .addField("Download TeamSpeak", "[Click here](https://teamspeak.com/en/downloads/)")
-        console.log('TS info sent.');  //Echo in log
-        console.log(' ');
-        message.channel.send(Embed);  //Send TS info embed in channel where command was sent
+    if (message.content.toLowerCase().startsWith(`${prefix}ts`)) {
+      Gamedig.query({
+        type: 'teamspeak3',
+        host: '104.238.135.16',
+        port: 9160,
+        teamspeakQueryPort: 9100,
+      })
+        .then(state => {
 
+          const {players, raw} = state;
+          const clientCount = players.length;
+          const {channels} = raw;
+          const activeClients = channels
+            .filter(({ channel_name }) => channel_name != 'AFK')
+            .reduce((current, next) => current + parseInt(next.total_clients, 10), -1);
+
+          console.log('TS info sent.'); //Echo in log
+          console.log(`There are currently ${activeClients} players online`); //Echo in log
+          console.log(' ');
+          const embed = new Discord.RichEmbed() //Create TS info embed
+            .setColor('#FF0000')
+            .setTitle('The most TOXIC TeamSpeak in the USA!')
+            .setAuthor("The Doctor's Office")
+            .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
+            .addField('Teamspeak Address:', 'ts3.docsoffice.net:9160', true)
+            .addField(
+              `There are currently **${activeClients}** players online`,
+              'Download TeamSpeak [-->HERE<--](https://teamspeak.com/en/downloads/)',
+              true,
+            );
+          message.channel.send({ embed }); //Send TS info embed in channel where command was sent
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
 
     //Round Info UNFINISHED
     if (message.content.startsWith(prefix + 'round')) {
-      const Embed = new Discord.RichEmbed()
+      const embed = new Discord.RichEmbed()
       .setColor('#FF0000')
       .setTitle('The Doctor\'s Office | Cincinnati')
       .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
@@ -125,7 +156,7 @@ client.on('message', message => {
       .setFooter('UNDER CONSTRUCTION STILL YOU MORONS')
       console.log('Round info posted');  //Echo in log
       console.log(' ');
-      message.channel.send(Embed);  //Send round info embed in channel where command was sent
+      message.channel.send({embed});  //Send round info embed in channel where command was sent
 
     }
 
@@ -140,15 +171,42 @@ client.on('guildMemberAdd', member => {
     console.log('TS info sent to new user.');  //Echo in log
     console.log(' ');
 
-    const Embed = new Discord.RichEmbed()  //Create TS info embed
-    .setColor('#FF0000')
-    .setTitle('The most TOXIC TeamSpeak in the USA!')
-    .setAuthor('The Doctor\'s Office')
-    .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
-    .addField('```Teamspeak Address:```', '```ts3.docsoffice.net:9160```')
-    .addField("Download TeamSpeak", "[Click here](https://teamspeak.com/en/downloads/)")
+    Gamedig.query({
+      type: 'teamspeak3',
+      host: '104.238.135.16',
+      port: 9160,
+      teamspeakQueryPort: 9100,
+    })
+      .then(state => {
 
-    channel.send(Embed); //Send the embed message in current channel
+        const {players, raw} = state;
+        const clientCount = players.length;
+        const {channels} = raw;
+        const activeClients = channels
+          .filter(({ channel_name }) => channel_name != 'AFK')
+          .reduce((current, next) => current + parseInt(next.total_clients, 10), -1);
+
+        console.log('TS info sent.'); //Echo in log
+        console.log(`There are currently ${activeClients} players online`); //Echo in log
+        console.log(' ');
+        const embed = new Discord.RichEmbed() //Create TS info embed
+          .setColor('#FF0000')
+          .setTitle('The most TOXIC TeamSpeak in the USA!')
+          .setAuthor("The Doctor's Office")
+          .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
+          .addField('Teamspeak Address:', 'ts3.docsoffice.net:9160', true)
+          .addField(
+            `There are currently **${activeClients}** players online`,
+            'Download TeamSpeak [-->HERE<--](https://teamspeak.com/en/downloads/)',
+            true,
+          );
+        message.channel.send({ embed }); //Send TS info embed in channel where command was sent
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    //channel.send({embed}); //Send the embed message in current channel
 
 });
 
