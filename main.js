@@ -137,7 +137,7 @@ client.on('message', message => {
               'Download TeamSpeak [-->HERE<--](https://teamspeak.com/en/downloads/)',
               true,
             )
-            .addField('If you already have Teamspeak 3, use the link below:', '**[>>>>>>>>>>>>>>>CONNECT NOW<<<<<<<<<<<<<<<](http://ts.docsoffice.net/)**');
+            .addField('If you already have Teamspeak 3, use the link below:', '**[CONNECT NOW](http://ts.docsoffice.net/)**');
           message.channel.send({ embed }); //Send TS info embed in channel where command was sent
         })
         .catch(error => {
