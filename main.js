@@ -136,7 +136,8 @@ client.on('message', message => {
               `There are currently **${activeClients}** players online`,
               'Download TeamSpeak [-->HERE<--](https://teamspeak.com/en/downloads/)',
               true,
-            );
+            )
+            .addField('If you already have Teamspeak 3, use the link below:', '**[CONNECT NOW](http://ts.docsoffice.net/)**');
           message.channel.send({ embed }); //Send TS info embed in channel where command was sent
         })
         .catch(error => {
@@ -199,8 +200,9 @@ client.on('guildMemberAdd', member => {
             `There are currently **${activeClients}** players online`,
             'Download TeamSpeak [-->HERE<--](https://teamspeak.com/en/downloads/)',
             true,
-          );
-        message.channel.send({ embed }); //Send TS info embed in channel where command was sent
+          )
+          .addField('If you already have Teamspeak 3, use the link below:', '**[CONNECT NOW](http://ts.docsoffice.net/)**');
+        channel.send({ embed }); //Send TS info embed in channel where command was sent
       })
       .catch(error => {
         console.log(error);
