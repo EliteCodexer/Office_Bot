@@ -1,3 +1,2 @@
-@echo off
-node main.js
-pause
+call bot.bat
+call monit.bat
