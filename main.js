@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 const Gamedig = require('gamedig');
+var unirest = require('unirest');
 var fs = require('fs'),
     request = require('request');
 require('events').EventEmitter.defaultMaxListeners = 15;
@@ -17,8 +18,8 @@ client.on("ready", () => {
 //Variable Declaration
 var welcomechannel = 'the-lobby';
 var statusbannerlink = 'https://cdn.battlemetrics.com/b/standardVertical/3379634.png?foreground=%23EEEEEE&linkColor=%231185ec&lines=%23333333&background=%23222222&chart=players%3A24H&chartColor=%23FF0700&maxPlayersHeight=300'; //Link to Battlemetrics banner
-var adminfile = 'F:\\servers\\public\\SquadGame\\ServerConfig\\Admins.cfg'; //Path to the admin.cfg file for whitelisting.
-var wlchannel = 'queue_skip_request'; //Name of channel you want the automatic whitelist to work in.
+var adminfile = 'C:\\Users\\root\\Desktop\\Servers\\Squad\\Server1\\SquadGame\\ServerConfig\\Admins.cfg'; //Path to the admin.cfg file for whitelisting.
+var wlchannel = 'whitelist-request'; //Name of channel you want the automatic whitelist to work in.
 
 //Constant declaration
 const prefix = config.prefix;  //Pull prefix from config,json file
@@ -87,7 +88,7 @@ client.on('message', message => {
 
     //Help
     if (message.content.startsWith(prefix + 'help')) {
-      message.channel.send('Here are the current bot commands: ```!status - Display Squad Server Status``` ```!TS or !ts - Display Teamspeak Connection Information```')
+      message.channel.send('Here are the current bot commands: ```!status - Squad Server Battlemetrics Banner``` ```!TS or !ts - Teamspeak Connection Information``` ```!round - Squad Server Info```')
       console.log('Help requested.');  //Echo in log
       console.log(' ');
     }
@@ -147,19 +148,25 @@ client.on('message', message => {
 
     //Round Info UNFINISHED
     if (message.content.startsWith(prefix + 'round')) {
-      const embed = new Discord.RichEmbed()
-      .setColor('#FF0000')
-      .setTitle('The Doctor\'s Office | Cincinnati')
-      .setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
-      .addField('Current Map:', '```OP First Light```')
-      .addField('Player Count:', '```94 / 100```', true)
-      .addField('Time Left:', '```4:20```', true)
-      .setFooter('UNDER CONSTRUCTION STILL YOU MORONS')
-      console.log('Round info posted');  //Echo in log
-      console.log(' ');
-      message.channel.send({embed});  //Send round info embed in channel where command was sent
-
+      var query = "The Doctor's Office | New York";
+        unirest.get("https://api.battlemetrics.com/servers?filter[search]=\"" + query + "\"")
+            .end(function (result) {
+                var json = JSON.parse(JSON.stringify(result.body));
+                    json.data.map(data => {
+                      const embed = new Discord.RichEmbed()
+                      	.setColor('#FF0000')
+                      	.setTitle('|                    The Doctor\'s Office | New York                     |\n| Watch live at https://www.twitch.tv/docsofficetv/ |')
+                      	.setThumbnail('https://cdn.discordapp.com/icons/323631246255325196/f7ca22011d2155936500304b4a39b906.png?size=128')
+                        .addField('Current Map:', '```yaml\n' + data.attributes.details.map + '```', true)
+                      	.addField('Player Count:', '```yaml\n' + data.attributes.players + ' / ' + data.attributes.maxPlayers + '```', true)
+                        .addField('Direct Connect to Squad Server:', 'steam://connect/66.70.180.171:8787');
+                      	console.log('Round info posted');  //Echo in log
+                      	console.log(' ');
+                      	message.channel.send({embed});  //Send round info embed in channel where command was sent
+                    })
+            });
     }
+
 
 });
 
