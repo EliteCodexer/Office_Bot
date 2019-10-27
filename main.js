@@ -52,7 +52,7 @@ client.on('message', message => {
     if (message.channel.name == wlchannel) {
 
         var input = message.content;
-        var userInput = input + '\r\n';
+        var userInput = input + '\n';
 
         var admin = input.substr(0, 6);
         var number = input.substr(6, 17);
