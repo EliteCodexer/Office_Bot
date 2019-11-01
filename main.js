@@ -3,6 +3,8 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 const Gamedig = require('gamedig');
+const DOMParser = require('xmldom').DOMParser;
+const fetch = require('node-fetch');
 var unirest = require('unirest');
 var fs = require('fs'),
     request = require('request');
@@ -169,6 +171,35 @@ client.on('message', message => {
 
 
 });
+
+//Get Steam ID with profile URL and command: !getid
+client.on("message", async message => {
+  if (message.channel.name == wlchannel && message.content.toLowerCase().startsWith(`${prefix}getid`)){
+    if (message.content.includes("https://steamcommunity.com/id") && !message.content.includes("your_profile_name") && !message.content.includes("?xml=1")){
+      const args = message.content.slice(prefix.length).split(' ');
+      const command = args.shift().toLowerCase();
+      message.channel.send(`Retrieving ID for: <${args}>`);
+      const url = args[0] + ("?xml=1");
+      try {
+        const resp = await fetch(url);
+        const text = await resp.text();
+        const doc = new DOMParser().parseFromString(text);
+        const ele = doc.documentElement.getElementsByTagName("steamID64");
+        const steamID = ele.item(0).firstChild.nodeValue;
+        const nameele = doc.documentElement.getElementsByTagName("steamID");
+        const profname = nameele.item(0).firstChild.nodeValue;
+        message.channel.send(`Your steam id: **${steamID}**`);
+        message.channel.send('Want server whitelist now?  Copy and paste this into chat => **Admin=' + steamID + ':Whitelist //' + profname + '**')
+      } catch (error) {
+        console.log(error);
+        message.channel.send("An error occurred retrieving your steam id");
+      }
+    }else {
+      message.channel.send("Please input a valid profile URL.\nExample:  https://steamcommunity.com/id/gabelogannewell **OR** http://steamcommunity.com/profiles/76561197960287930")
+    }
+  }
+});
+
 
 //New Discord User Welcome with Teamspeak Embed
 client.on('guildMemberAdd', member => {
