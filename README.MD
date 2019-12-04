@@ -10,11 +10,16 @@ Discord Bot for Squad Server, Teamspeak, and Discord admininistration for The Do
 ```
 npm install --save --msvs_version=2015 discordv8
 ```
+5) Open CMD prompt and run
+```
+npm install pm2 -g
+```
 
 **SETTING UP THE BOT**
 
 1) In the bot's files, open main.js with a text editor and update file paths to the proper directories, enter whitelist channel name, and specify the channel you would like the auto-welcome to ping new server joins.
 2) Execute the start.bat to initialize the bot.
+3) Execute the stop.bat to kill the bot.
 
 **DEFAULT COMMANDS**
 
